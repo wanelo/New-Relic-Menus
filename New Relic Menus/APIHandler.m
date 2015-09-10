@@ -219,6 +219,9 @@ SYNTHESIZE_SINGLETON_FOR_CLASS(APIHandler);
         
         [self.applications addObject:app];
     }
+    self.applications = [self.applications sortedArrayUsingComparator:^NSComparisonResult(NRMApplication *app1, NRMApplication *app2) {
+        return [app1.name compare:app2.name];
+    }];
     if (primaryApplicationId == 0) {
         primaryApplicationId = [self.applications.firstObject appId];
     }
