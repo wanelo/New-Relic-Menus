@@ -483,12 +483,6 @@ typedef void (^ASIDataBlock)(NSData *data);
 	//block to execute when headers are received
 	ASIHeadersBlock headersReceivedBlock;
 
-	//block to execute when request completes successfully
-	ASIBasicBlock completionBlock;
-
-	//block to execute when request fails
-	ASIBasicBlock failureBlock;
-
 	//block for when bytes are received
 	ASIProgressBlock bytesReceivedBlock;
 
@@ -972,5 +966,12 @@ typedef void (^ASIDataBlock)(NSData *data);
 #endif
 @property (retain) ASIDataDecompressor *dataDecompressor;
 @property (assign) BOOL shouldWaitToInflateCompressedResponses;
+
+//block to execute when request completes successfully
+@property (copy, nonatomic) ASIBasicBlock completionBlock;
+
+//block to execute when request fails
+@property (copy, nonatomic) ASIBasicBlock failureBlock;
+
 
 @end

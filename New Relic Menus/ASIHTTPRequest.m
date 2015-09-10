@@ -218,6 +218,7 @@ static NSOperationQueue *sharedQueue = nil;
 @property (retain, nonatomic) NSTimer *statusTimer;
 @property (assign) BOOL didUseCachedResponse;
 @property (retain, nonatomic) NSURL *redirectURL;
+
 @end
 
 
@@ -373,15 +374,13 @@ static NSOperationQueue *sharedQueue = nil;
 - (void)releaseBlocksOnMainThread
 {
 	NSMutableArray *blocks = [NSMutableArray array];
-	if (completionBlock) {
-		[blocks addObject:completionBlock];
-		[completionBlock release];
-		completionBlock = nil;
+	if (self.completionBlock) {
+		[blocks addObject:self.completionBlock];
+		self.completionBlock = nil;
 	}
-	if (failureBlock) {
-		[blocks addObject:failureBlock];
-		[failureBlock release];
-		failureBlock = nil;
+	if (self.failureBlock) {
+		[blocks addObject:self.failureBlock];
+		self.failureBlock = nil;
 	}
 	if (startedBlock) {
 		[blocks addObject:startedBlock];
@@ -1931,8 +1930,8 @@ static NSOperationQueue *sharedQueue = nil;
 		[queue performSelector:@selector(requestFinished:) withObject:self];
 	}
 	#if NS_BLOCKS_AVAILABLE
-	if(completionBlock){
-		completionBlock();
+	if(self.completionBlock){
+		self.completionBlock();
 	}
 	#endif
 }
@@ -1947,8 +1946,8 @@ static NSOperationQueue *sharedQueue = nil;
 		[queue performSelector:@selector(requestFailed:) withObject:self];
 	}
 	#if NS_BLOCKS_AVAILABLE
-    if(failureBlock){
-        failureBlock();
+    if(self.failureBlock){
+        self.failureBlock();
     }
 	#endif
 }
@@ -3517,6 +3516,10 @@ static NSOperationQueue *sharedQueue = nil;
 	return [[self connectionInfo] objectForKey:@"id"];
 }
 
+- (void)setFailedBlock:(ASIBasicBlock)aFailedBlock {
+    self.failureBlock = aFailedBlock;
+}
+
 + (void)expirePersistentConnections
 {
 	[connectionsLock lock];
@@ -4370,18 +4373,6 @@ static NSOperationQueue *sharedQueue = nil;
 	headersReceivedBlock = [aReceivedBlock copy];
 }
 
-- (void)setCompletionBlock:(ASIBasicBlock)aCompletionBlock
-{
-	[completionBlock release];
-	completionBlock = [aCompletionBlock copy];
-}
-
-- (void)setFailedBlock:(ASIBasicBlock)aFailedBlock
-{
-	[failureBlock release];
-	failureBlock = [aFailedBlock copy];
-}
-
 - (void)setBytesReceivedBlock:(ASIProgressBlock)aBytesReceivedBlock
 {
 	[bytesReceivedBlock release];
@@ -4545,4 +4536,6 @@ static NSOperationQueue *sharedQueue = nil;
 #endif
 @synthesize dataDecompressor;
 @synthesize shouldWaitToInflateCompressedResponses;
+@synthesize completionBlock;
+@synthesize failureBlock;
 @end
